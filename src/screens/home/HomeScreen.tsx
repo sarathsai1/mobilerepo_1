@@ -23,6 +23,12 @@ const HomeScreen: React.FC = () => {
 
     useEffect(() => {
         const fetchData = async () => {
+            const timeoutDuration = 3000; // Set your desired loading time in milliseconds
+
+            // Start the loading timeout
+            const timeout = setTimeout(() => {
+                setLoading(false); // Hide the loading indicator after timeout
+            }, timeoutDuration);
             try {
                 const token = await AsyncStorage.getItem('authToken');
                 const api_url = 'http://54.152.49.191:8080/dashboard';
@@ -39,9 +45,15 @@ const HomeScreen: React.FC = () => {
                 setLoading(false);
                 setStatusCode(null);  // Explicitly handle the error case
             }
+            finally {
+                // Clear timeout and stop loading
+                clearTimeout(timeout);
+                setLoading(false);
+            }
         };
 
         fetchData();
+        
     }, []);
 
     useEffect(() => {

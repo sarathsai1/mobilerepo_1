@@ -8,7 +8,6 @@ interface CouponCodeProps {
 }
 
 const CouponCode: React.FC<CouponCodeProps> = ({ onDiscountChange }) => {
-
     const [couponCodeTextName, setCouponCodeTextName] = useState('');
     const [couponCode, setCouponCode] = useState('');
     const [couponDisAmount, setCouponDisAmount] = useState(0);
@@ -17,35 +16,35 @@ const CouponCode: React.FC<CouponCodeProps> = ({ onDiscountChange }) => {
     const couponList = [
         {
             couponCode: 'New Customer',
-            discountAmount: 5 //rupees
+            discountAmount: 5 // rupees
         },
         {
             couponCode: 'Happy Customer',
-            discountAmount: 50 //rupees
+            discountAmount: 50 // rupees
         },
-    ]
+    ];
 
     const couponCodeApply = () => {
         if (couponCodeTextName !== '') {
             for (let coupon of couponList) {
-                if (couponCodeTextName == coupon.couponCode) {
-                    console.log(coupon)
-                    setCouponCode(coupon.couponCode)
-                    setCouponDisAmount(coupon.discountAmount)
+                if (couponCodeTextName === coupon.couponCode) {
+                    setCouponCode(coupon.couponCode);
+                    setCouponDisAmount(coupon.discountAmount);
                     onDiscountChange(coupon.discountAmount);
-                    setCouponCodeApplyStatus(true)
-                    return
+                    setCouponCodeApplyStatus(true);
+                    return;
                 }
             }
         }
-        setCouponCodeApplyStatus(false)
-    }
+        setCouponCodeApplyStatus(false);
+    };
 
     return (
         <View style={styles.container}>
             <View style={styles.inputContainer}>
                 <TextInput
                     style={styles.input}
+                    value={couponCodeTextName}
                     onChangeText={(value) => setCouponCodeTextName(value)}
                     placeholder="Coupon Code"
                 />
@@ -60,21 +59,13 @@ const CouponCode: React.FC<CouponCodeProps> = ({ onDiscountChange }) => {
             </View>
 
             {couponCodeApplyStatus ? (
-                <>
-                    <View style={styles.discountLine}>
-                        <Text style={styles.discountText}>{couponCode}</Text>
-                        <Text style={[styles.discountText, styles.discountAmount]}>
-                            -₹{couponDisAmount}
-                        </Text>
-                    </View>
-                </>
-            ) : (
-                <>
-                    <View style={styles.discountLine}>
-
-                    </View>
-                </>
-            )}
+                <View style={styles.discountLine}>
+                    <Text style={styles.discountText}>{couponCode}</Text>
+                    <Text style={[styles.discountText, styles.discountAmount]}>
+                        -₹{couponDisAmount}
+                    </Text>
+                </View>
+            ) : null}
 
             <View style={styles.discountLine}>
                 <Text style={styles.discountText}>NEWCUSTOMER_3%</Text>
@@ -88,9 +79,7 @@ const CouponCode: React.FC<CouponCodeProps> = ({ onDiscountChange }) => {
 };
 
 const styles = StyleSheet.create({
-    container: {
-
-    },
+    container: {},
     inputContainer: {
         flexDirection: 'row',
         alignItems: 'center',
@@ -99,6 +88,10 @@ const styles = StyleSheet.create({
         borderRadius: 25,
         backgroundColor: 'white',
         marginBottom: 10,
+        borderColor: "white",
+        borderWidth: 2,
+        borderTopLeftRadius: 25,
+        borderBottomLeftRadius: 25,
     },
     input: {
         flex: 1,
@@ -107,6 +100,7 @@ const styles = StyleSheet.create({
         padding: 0,
         paddingHorizontal: 8,
         color: theme.colors.text,
+        
     },
     prefixContainer: {
         width: 60,
@@ -114,29 +108,22 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
         backgroundColor: theme.colors.primary,
-        borderWidth: 1,
-        borderColor: '#D0D5DD',
-        paddingHorizontal: 10,
         borderTopRightRadius: 25,
         borderBottomRightRadius: 25,
     },
     arrowIcon: {
         width: 18,
         height: 15,
+        
     },
     discountLine: {
         paddingHorizontal: 15,
         flexDirection: 'row',
         justifyContent: 'space-between',
-        marginBottom: 4, // Adjust as needed
-    },
-    totalLine: {
-        paddingHorizontal: 15,
-        flexDirection: 'row',
-        justifyContent: 'space-between',
+        marginBottom: 4,
     },
     discountText: {
-        color: '#fff', // Replace with your desired text color
+        color: '#fff',
         fontSize: 16,
     },
     discountAmount: {

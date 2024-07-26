@@ -34,6 +34,7 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
+        backgroundColor:"#D7E5D5",
     },
     icon: {
         width: 205, // Set the size of your icon

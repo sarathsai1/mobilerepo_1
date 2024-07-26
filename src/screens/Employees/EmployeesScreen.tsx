@@ -138,6 +138,6 @@ const styles = StyleSheet.create({
         alignSelf: 'center',
         paddingHorizontal: 25,
     },
-});
+}); 
 
 export default EmployeesScreen;

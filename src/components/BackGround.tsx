@@ -23,7 +23,7 @@ const BackGround: React.FC<BackGroundProps> = ({
     <View
       {...props}
       style={[
-        { backgroundColor: theme.colors.background }, // White background
+        { backgroundColor: "#D7E5D4" }, // White background
         tabletStyle,
         style,
       ]}

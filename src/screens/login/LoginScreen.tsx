@@ -146,6 +146,7 @@ const LoginScreen: React.FC = () => {
         <SocialMediaButton 
           title='Log in with Google' 
           onPress={handleGoogleLogin} 
+          
         />
       </View>
     </BackGround>

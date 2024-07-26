@@ -1,6 +1,3 @@
-
-
-
 import React, { useState, useEffect } from 'react';
 import { View, StyleSheet, TouchableOpacity, Text, ScrollView, Alert } from 'react-native';
 import RoundInput from '../../../../components/inputs/RoundInput';
@@ -12,7 +9,6 @@ import { Picker } from '@react-native-picker/picker';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { theme } from '../../../../theme';
 
-// Define a type for the form data
 export type FormData = {
     professionalId: string;
     clientId: string;
@@ -146,18 +142,12 @@ const AddProjectsForm = ({ onSubmit }: { onSubmit: (formData: FormData) => void 
                     },
                     body: JSON.stringify(formData),
                 });
-console.log(response);
                 if (!response.ok) {
                     throw new Error(`Error ${response.status}: ${response.statusText}`);
                 }
- else if (response.status === 200) {
-    Alert.alert("Successfully Added project", response.statusText)
- }
                 const responseData = await response.json();
                 console.log('Success:', responseData);
-                // You can handle the response as needed
-console.log(formData);
-                // Reset the form
+                Alert.alert("Successfully Added project", response.statusText);
                 setFormData({
                     professionalId: '',
                     clientId: '',
@@ -168,8 +158,8 @@ console.log(formData);
                     totalProjectAmount: 0,
                     amountPaid: 0,
                     roles: [
-                        { roleId: 1, employeeIds: [] }, // POC role
-                        { roleId: 2, employeeIds: [] }  // Assistant role
+                        { roleId: 1, employeeIds: [] },
+                        { roleId: 2, employeeIds: [] }
                     ]
                 });
             } catch (error) {
@@ -186,10 +176,21 @@ console.log(formData);
 
         setFormData(prevFormData => ({
             ...prevFormData,
-            roles: prevFormData.roles.map(role => role.roleId === roleId ? { ...role, employeeIds: selectedEmployeeIds } : role)
+            roles: prevFormData.roles.map(role =>
+                role.roleId === roleId ? { ...role, employeeIds: selectedEmployeeIds } : role
+            )
         }));
     };
-    
+
+    // Filter available employees for a given role
+    const getAvailableEmployees = (roleId: number) => {
+        const selectedEmployeeIds = formData.roles
+            .filter(role => role.roleId !== roleId)
+            .flatMap(role => role.employeeIds);
+
+        return employees.filter(emp => !selectedEmployeeIds.includes(emp.id));
+    };
+
     return (
         <View style={styles.formContainer}>
             <ScrollView showsVerticalScrollIndicator={false} style={{ width: '100%', height: 400 }}>
@@ -219,7 +220,7 @@ console.log(formData);
                     onChangeText={(value) => handleChange('natureOfWork', value)}
                     label={''}
                     editable={true}
-                    error={errors.workNature} options={[]}                />
+                    error={errors.natureOfWork} options={[]}                />
 
                 <TouchableOpacity onPress={() => setOpenStartDatePicker(true)}>
                     <RoundInput
@@ -229,8 +230,7 @@ console.log(formData);
                         label="Estimated Start Date"
                         editable={false}
                         error={errors.estimatedStartDate}
-                        onChangeText={() => { } } // No-op
-                        options={[]}                    />
+                        onChangeText={() => { } } options={[]}                    />
                 </TouchableOpacity>
 
                 <TouchableOpacity onPress={() => setOpenEndDatePicker(true)}>
@@ -241,8 +241,7 @@ console.log(formData);
                         label="Estimated End Date"
                         editable={false}
                         error={errors.estimatedEndDate}
-                        onChangeText={() => { } } // No-op
-                        options={[]}                    />
+                        onChangeText={() => { } } options={[]}                    />
                 </TouchableOpacity>
 
                 <DatePicker
@@ -250,10 +249,10 @@ console.log(formData);
                     open={openStartDatePicker}
                     date={new Date(formData.estimatedStartDate)}
                     onConfirm={(date: any) => {
-                        setOpenStartDatePicker(true);
+                        setOpenStartDatePicker(false);
                         handleChange('estimatedStartDate', moment(date).format('YYYY-MM-DD'));
                     }}
-                    onCancel={() => setOpenStartDatePicker(true)}
+                    onCancel={() => setOpenStartDatePicker(false)}
                 />
 
                 <DatePicker
@@ -261,10 +260,10 @@ console.log(formData);
                     open={openEndDatePicker}
                     date={new Date(formData.estimatedEndDate)}
                     onConfirm={(date: any) => {
-                        setOpenEndDatePicker(true);
+                        setOpenEndDatePicker(false);
                         handleChange('estimatedEndDate', moment(date).format('YYYY-MM-DD'));
                     }}
-                    onCancel={() => setOpenEndDatePicker(true)}
+                    onCancel={() => setOpenEndDatePicker(false)}
                 />
 
                 <RoundInput
@@ -284,14 +283,14 @@ console.log(formData);
                     error={errors.amountPaid} options={[]}                />
 
                 <MultiSelectDropDown
-                    data={employees.map(emp => emp.name)}
+                    data={getAvailableEmployees(1).map(emp => emp.name)}
                     label={'POC'}
                     onSelectionChange={(selectedItems: string[]) => handleRoleSelection(1, selectedItems)}
                     selectedItems={formData.roles.find(role => role.roleId === 1)?.employeeIds.map(id => employees.find(emp => emp.id === id)?.name || '') || []}
                 />
 
                 <MultiSelectDropDown
-                    data={employees.map(emp => emp.name)}
+                    data={getAvailableEmployees(2).map(emp => emp.name)}
                     label={'Assistant'}
                     onSelectionChange={(selectedItems: string[]) => handleRoleSelection(2, selectedItems)}
                     selectedItems={formData.roles.find(role => role.roleId === 2)?.employeeIds.map(id => employees.find(emp => emp.id === id)?.name || '') || []}
@@ -306,7 +305,6 @@ console.log(formData);
     );
 };
 
-// Component styles
 const styles = StyleSheet.create({
     formContainer: {
         width: '100%',
@@ -332,7 +330,6 @@ const styles = StyleSheet.create({
     },
     dateInput: {
         marginVertical: 3,
-        
     },
     label: {
         fontSize: 16,

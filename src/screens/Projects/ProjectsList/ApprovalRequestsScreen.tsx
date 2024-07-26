@@ -19,32 +19,40 @@ const ApprovalProjectsScreen: React.FC = () => {
         const fetchProjects = async () => {
             try {
                 const token = await AsyncStorage.getItem('authToken');
-                if (!token) {
-                    throw new Error("Token is missing");
+                const professionalId = await AsyncStorage.getItem('Id');
+    
+                if (!token || !professionalId) {
+                    throw new Error("Token or professionalId is missing");
                 }
-                const response = await fetch(`http://54.152.49.191:8080/project/getAllProjects/71`, {
+    
+                const response = await fetch(`http://54.152.49.191:8080/project/getAllProjects/${professionalId}`, {
                     headers: {
                         'Content-Type': 'application/json',
                         'Authorization': `Bearer ${token}`,
                     },
                 });
+    
                 if (!response.ok) {
-                    throw new Error('Failed to fetch');
+                    throw new Error('Failed to fetch projects');
                 }
+    
                 const data = await response.json();
-
-                // Log and validate data structure
-                console.log("Fetched data:", data);
-                setProjectsData(data);
+    
+                // Validate data structure
+                if (Array.isArray(data)) {
+                    setProjectsData(data);
+                } else {
+                    throw new Error('Unexpected data structure');
+                }
             } catch (err) {
                 console.error("Error fetching projects:", err);
                 setError('Failed to fetch projects');
             }
         };
-
+    
         fetchProjects();
     }, []);
-
+    
     return (
         <BackGround safeArea={true} style={defaults.flex}>
             <View style={styles.container}>

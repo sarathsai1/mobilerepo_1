@@ -123,7 +123,6 @@ const SubscriptionScreen: React.FC = () => {
                             </Text>
                         </View>
 
-                        <View style={{ flexDirection: 'row', height: '100%' }}>
                             <View style={{ width: '48%', marginRight: 10 }}>
                                 <SubscriptionPlans options={subscriptionOptions} onSelectionChange={handleSelectionChange} />
                             </View>
@@ -158,7 +157,7 @@ const SubscriptionScreen: React.FC = () => {
                                     </Text>
                                 </View>
                             </View>
-                        </View>
+                      
                     </View>
                 </BackGround>
             ) : (
@@ -170,9 +169,11 @@ const SubscriptionScreen: React.FC = () => {
                                 To complete the registration process, please make the payment
                             </Text>
                         </View>
-
-                        <SubscriptionPlans options={subscriptionOptions} onSelectionChange={handleSelectionChange} />
-
+<ScrollView>
+                  <View style={{ width: '100%', marginRight: 10 }}>
+                                <SubscriptionPlans options={subscriptionOptions} onSelectionChange={handleSelectionChange} />
+                            </View>
+                            </ScrollView>
                         <View style={styles.bottomOfContent}>
                             <View style={styles.couponContent}>
                                 <CouponCode title={''} onDiscountChange={handleDiscountChange} />
@@ -238,6 +239,8 @@ const styles = StyleSheet.create({
         left: 0,
         right: 0,
         zIndex: 1,
+        // backgroundColor: theme.colors.background,
+        // paddingHorizontal: 20,
     },
 
     couponContent: {

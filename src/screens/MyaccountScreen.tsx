@@ -30,6 +30,26 @@ const MyaccountScreen: React.FC = () => {
         websiteLink: '',
         socialMediaLink: '',
         gstNumber: '',
+        panNumber: '',
+        address: '',
+        city: '',
+        country: '',
+        pinCode: '',
+        gstPdfFileName: '',
+        panOrVoterPdfFileName: '',
+        profileImage: '',
+    });
+
+    const [errors, setErrors] = useState({
+        fullName: '',
+        personalEmail: '',
+        phoneNumber: '',
+        companyName: '',
+        businessEmail: '',
+        websiteLink: '',
+        socialMediaLink: '',
+        gstNumber: '',
+        panNumber: '',
         address: '',
         city: '',
         country: '',
@@ -85,6 +105,7 @@ const MyaccountScreen: React.FC = () => {
                     websiteLink: userData.websiteLink || '',
                     socialMediaLink: userData.socialMediaLink || '',
                     gstNumber: userData.gstNumber || '',
+                    panNumber: userData.panNumber || '',
                     address: userData.address || '',
                     city: userData.city || '',
                     country: userData.country || '',
@@ -149,11 +170,66 @@ const MyaccountScreen: React.FC = () => {
         }
     };
 
+    const validateEmail = (email: string, field: string) => {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!email) {
+            setErrors((prev) => ({ ...prev, [field]: 'Email is required' }));
+        } else if (!emailRegex.test(email)) {
+            setErrors((prev) => ({ ...prev, [field]: 'Invalid email format' }));
+        } else {
+            setErrors((prev) => ({ ...prev, [field]: '' }));
+        }
+    };
+
+    const validatePhoneNumber = (text: string) => {
+        if (!text) {
+            setErrors((prev) => ({ ...prev, phoneNumber: 'Phone Number is required' }));
+        } else if (isNaN(Number(text)) || text.length < 10) {
+            setErrors((prev) => ({ ...prev, phoneNumber: 'Invalid phone number' }));
+        } else {
+            setErrors((prev) => ({ ...prev, phoneNumber: '' }));
+        }
+    };
+
+    const gstNumberRegex = /^[A-Za-z0-9]+$/; // Adjust this regex based on the actual format of GST numbers
+    const panNumberRegex = /^[A-Z]{5}[0-9]{4}[A-Z]{1}$/; // Example regex for PAN number format
+
+    const validateGSTNumber = (text: string) => {
+        if (!text) {
+            setErrors((prev) => ({ ...prev, gstNumber: 'GST Number is required' }));
+        } else if (!gstNumberRegex.test(text)) {
+            setErrors((prev) => ({ ...prev, gstNumber: 'GST Number should only contain alphanumeric characters' }));
+        } else {
+            setErrors((prev) => ({ ...prev, gstNumber: '' }));
+        }
+    };
+
+    const validatePanNumber = (text: string) => {
+        if (!text) {
+            setErrors((prev) => ({ ...prev, panNumber: 'PAN Number is required' }));
+        } else if (!panNumberRegex.test(text)) {
+            setErrors((prev) => ({ ...prev, panNumber: 'PAN Number should follow the format: 5 letters, 4 digits, 1 letter' }));
+        } else {
+            setErrors((prev) => ({ ...prev, panNumber: '' }));
+        }
+    };
+
     const handleChangeText = (field: keyof typeof formData, text: string) => {
         setFormData(prevData => ({
             ...prevData,
             [field]: text,
         }));
+
+        // Validate the field
+        if (field === 'personalEmail' || field === 'businessEmail') {
+            validateEmail(text, field);
+        } else if (field === 'phoneNumber') {
+            validatePhoneNumber(text);
+        } else if (field === 'gstNumber') {
+            validateGSTNumber(text);
+        } else if (field === 'panNumber') {
+            validatePanNumber(text);
+        }
     };
 
     const fields = [
@@ -165,6 +241,7 @@ const MyaccountScreen: React.FC = () => {
         { label: 'Website Link', placeholder: 'Enter your website link', value: formData.websiteLink, field: 'websiteLink', editable: false },
         { label: 'Social Media Link', placeholder: 'Enter your social media link', value: formData.socialMediaLink, field: 'socialMediaLink', editable: false },
         { label: 'GST Number *', placeholder: 'Enter your GST Number', value: formData.gstNumber, field: 'gstNumber', editable: true },
+        { label: 'PAN Number *', placeholder: 'Enter your PAN Number', value: formData.panNumber, field: 'panNumber', editable: true },
         { label: 'Address', placeholder: 'Enter your address', value: formData.address, field: 'address', editable: false },
         { label: 'City *', placeholder: 'Enter your city', value: formData.city, field: 'city', editable: false },
         { label: 'Country *', placeholder: 'Enter your country', value: formData.country, field: 'country', editable: false },
@@ -190,35 +267,53 @@ const MyaccountScreen: React.FC = () => {
                         />
                     </View>
                     {fields.map((field, index) => (
-                        <RoundInput
-                            key={index}
-                            label={field.label}
-                            placeholder={field.placeholder}
-                            value={field.value}
-                            editable={field.editable}
-                            error={""}
-                            onChangeText={(text) => handleChangeText(field.field, text)}
-                            options={[]}
-                            cursor={'auto'}
-                            inputStyle={field.editable ? {} : styles.readOnlyInput}
-                        />
+                        <View key={index}>
+                            <RoundInput
+                                label={field.label}
+                                placeholder={field.placeholder}
+                                value={field.value}
+                                editable={field.editable}
+                                error={errors[field.field as keyof typeof errors]}
+                                onChangeText={(text) => handleChangeText(field.field as keyof typeof formData, text)}
+                                options={[]}
+                                cursor={'default'}
+                                style={field.editable ? {} : styles.readOnlyInput} // Apply style conditionally
+                            />
+                            {/* {errors[field.field as keyof typeof errors] ? (
+                                <Text style={styles.errorText}>{errors[field.field as keyof typeof errors]}</Text>
+                            ) : null} */}
+                        </View>
                     ))}
+
                     <View style={styles.pdfContainer}>
-                        <Text style={styles.pdfLabel}>GST Registration Form</Text>
+                        {/* <Text style={styles.pdfLabel}>GST Registration Form</Text> */}
                         <View style={styles.pdfRow}>
-                            <Text style={styles.pdfFileName}>{gstPdfFileName || 'No file available'}</Text>
+                        <Text style={styles.pdfLabel}>GST Registration Form</Text>
+                            {/* <Text style={styles.pdfFileName}>{gstPdfFileName || 'No file available'}</Text> */}
                             <TouchableOpacity onPress={() => downloadAndOpenFile(gstPdfFileName, 'gst-form.pdf')}>
-                                <Image source={require('../assets/icons/pdf.png')} style={styles.icon} />
+                            <Image
+                                    source={require('../assets/icons/invoice_download.png')}
+                                    style={styles.invoiceIocn}
+                                />
+                                <Text>Invoice</Text>
                             </TouchableOpacity>
                         </View>
                     </View>
                     <View style={styles.pdfContainer}>
-                        <Text style={styles.pdfLabel}>PAN/Voter Card</Text>
+                       
                         <View style={styles.pdfRow}>
-                            <Text style={styles.pdfFileName}>{panOrVoterPdfFileName || 'No file available'}</Text>
-                            <TouchableOpacity onPress={() => downloadAndOpenFile(panOrVoterPdfFileName, 'pan-voter-card.pdf')}>
-                                <Image source={require('../assets/icons/pdf.png')} style={styles.icon} />
+                        <Text style={styles.pdfLabel}>PAN/Voter Card</Text>
+                            {/* <Text style={styles.pdfFileName}>GST FORM</Text> */}
+                            {/* <Text style={styles.pdfFileName}>{panOrVoterPdfFileName || 'No file available'}</Text> */}
+                            <View style={{justifyContent: 'center', alignItems: 'center'}}>
+                            <TouchableOpacity onPress={() => downloadAndOpenFile(panOrVoterPdfFileName, 'pan-voter-card.pdf')} >
+                            <Image
+                                    source={require('../assets/icons/invoice_download.png')}
+                                    style={styles.invoiceIocn}
+                                />
+                                <Text>Invoice</Text>
                             </TouchableOpacity>
+                            </View>
                         </View>
                     </View>
                     <RoundButton
@@ -237,7 +332,7 @@ const styles = StyleSheet.create({
     },
     content: {
         flex: 1,
-        padding: 16,
+        padding: 1,
     },
     loadingContainer: {
         flex: 1,
@@ -256,27 +351,43 @@ const styles = StyleSheet.create({
         borderColor: theme.colors.primary,
     },
     pdfContainer: {
-        marginBottom: 16,
+        marginBottom: 18,
+        color: theme.colors.primary,
     },
     pdfLabel: {
         fontSize: 16,
         fontWeight: 'bold',
         marginBottom: 8,
+        color: "black",
     },
     pdfRow: {
         flexDirection: 'row',
         alignItems: 'center',
+        justifyContent:"space-between"
     },
     pdfFileName: {
         flex: 1,
     },
     icon: {
-        width: 24,
-        height: 24,
+        width: 45,
+        height: 55,
     },
     readOnlyInput: {
         backgroundColor: '#f0f0f0',
         color: '#a0a0a0',
+        marginLeft: -10,
+        marginRight: -10,
+        borderRadius: 19,
+    },
+    errorText: {
+        color: 'red',
+        fontSize: 12,
+        marginTop: 4,
+    },
+    invoiceIocn:{
+        width: 25,
+        height: 25,
+        
     }
 });
 

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
 import { theme } from '../../../theme';
 
 type SubscriptionPlansType = {
@@ -12,7 +12,7 @@ type SubscriptionPlansType = {
 
 type SubscriptionPlansProps = {
   options: SubscriptionPlansType[];
-  onSelectionChange: (selectedOption: SubscriptionPlansType) => void; // Callback function
+  onSelectionChange: (selectedOption: SubscriptionPlansType) => void;
 };
 
 const SubscriptionPlans: React.FC<SubscriptionPlansProps> = ({ options, onSelectionChange }) => {
@@ -20,15 +20,18 @@ const SubscriptionPlans: React.FC<SubscriptionPlansProps> = ({ options, onSelect
 
   const handleSelection = (selectedOption: SubscriptionPlansType) => {
     setSelectedId(selectedOption.id);
-    onSelectionChange(selectedOption); // Call the callback function with the selected option
+    onSelectionChange(selectedOption);
   };
 
   return (
-    <View>
+    <ScrollView>
       {options.map((option) => (
         <TouchableOpacity
           key={option.id}
-          style={styles.container}
+          style={[
+            styles.container,
+            option.id === selectedId && styles.selectedContainer
+          ]}
           onPress={() => handleSelection(option)}
         >
           <View style={styles.textContainer}>
@@ -36,11 +39,6 @@ const SubscriptionPlans: React.FC<SubscriptionPlansProps> = ({ options, onSelect
             <Text style={[styles.priceText, { marginBottom: 10 }]}>
               ₹{option.subscriptionPlanAmount} / mo (₹{option.subscriptionDuration} / year)
             </Text>
-            {/* {option.plandetails.map((plans) => (
-              <Text style={[styles.priceText, { fontWeight: '600' }]}>
-                {plans}
-              </Text>
-            ))} */}
             <Text style={[styles.priceText, { fontWeight: '600' }]}>{option.description}</Text>
           </View>
           <View style={styles.radioButton}>
@@ -53,7 +51,7 @@ const SubscriptionPlans: React.FC<SubscriptionPlansProps> = ({ options, onSelect
           </View>
         </TouchableOpacity>
       ))}
-    </View>
+    </ScrollView>
   );
 };
 
@@ -70,7 +68,12 @@ const styles = StyleSheet.create({
     borderColor: theme.colors.text,
     backgroundColor: 'white',
   },
+  selectedContainer: {
+    borderColor: 'green',
+    borderWidth: 2,
+  },
   textContainer: {
+    flex: 1,
     justifyContent: 'center',
   },
   optionTitle: {
@@ -79,7 +82,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   priceText: {
-    color:"black",
+    color: 'black',
     fontSize: 16,
   },
   radioButton: {
@@ -94,15 +97,14 @@ const styles = StyleSheet.create({
   radioButtonIndicator: {
     height: 10,
     width: 10,
-    borderRadius: 5, // Ensure this is always half of the height and width
+    borderRadius: 5,
   },
   radioButtonSelected: {
     backgroundColor: 'green',
     height: 12,
     width: 12,
-    borderRadius: 5,
+    borderRadius: 6,
   },
-
 });
 
 export default SubscriptionPlans;

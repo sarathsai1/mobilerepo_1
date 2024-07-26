@@ -72,28 +72,28 @@ const RegistrationScreen: React.FC = () => {
   // const [websiteLink, setWebsiteLink] = useState('');
   // const [socialMediaLink, setSocialMediaLink] = useState('');
   const MAX_FILE_SIZE = 5 * 1024 * 1024;
-  
-const validateImageSize = async (uri: string) => {
-  try {
-    if (typeof uri !== 'string' || !uri.startsWith('file://')) {
-      throw new Error('Invalid file URI format');
-    }
-    
-    const stats = await RNFS.stat(uri);
-    
-    if (stats.size > MAX_FILE_SIZE) {
+
+  const validateImageSize = async (uri: string) => {
+    try {
+      if (typeof uri !== 'string' || !uri.startsWith('file://')) {
+        throw new Error('Invalid file URI format');
+      }
+
+      const stats = await RNFS.stat(uri);
+
+      if (stats.size > MAX_FILE_SIZE) {
+        setErrors({ profileImage: 'File size exceeds 5MB limit.' });
+        return false;
+      }
+
+      setErrors({ profileImage: '' });
+      return true;
+    } catch (error) {
+      console.error('Error checking file size:', error);
       setErrors({ profileImage: 'File size exceeds 5MB limit.' });
       return false;
     }
-    
-    setErrors({ profileImage: '' });
-    return true;
-  } catch (error) {
-    console.error('Error checking file size:', error);
-    setErrors({ profileImage: 'File size exceeds 5MB limit.' });
-    return false;
-  }
-};
+  };
 
   const onChangeUploadImages = async (uri: string) => {
     const isValid = await validateImageSize(uri);
@@ -128,7 +128,7 @@ const validateImageSize = async (uri: string) => {
     const isValid = await validateImageSize(uri);
     if (isValid) {
       setProfileImage(uri);
-       }
+    }
     // You can also handle additional logic here if needed
   };
   const handleUploadGSTPDF = async () => {
@@ -235,9 +235,9 @@ const validateImageSize = async (uri: string) => {
 
 
   const handleRegister = async () => {
-    if (!validateFields()) {
-      return; // If fields are not valid, do not proceed with the request
-    }
+    // if (!validateFields()) {
+    //   return; // If fields are not valid, do not proceed with the request
+    // }
 
     const formData = new FormData();
     formData.append('name', fullName);
@@ -492,47 +492,48 @@ const validateImageSize = async (uri: string) => {
   return (
     <BackGround safeArea={true} style={defaults.flex}>
       <View style={[styles.container, tabletStyle, isTablet && orientation === 'vertical' ? { width: '70%', height: 'auto', alignSelf: 'center' } : {}]}>
+       
         <ScrollView showsVerticalScrollIndicator={false}>
-        <View style={styles.imageUploadContent}>
-      <TouchableOpacity style={styles.imageUploadBoxContent}>
-        <DocImageUpload
-        
-          onImageUploaded={imageUploaded}
-          onImagePicked={imagePicked}
-          upload={false}
-          width={200}
-          height={200}
-          fileType={"images"}
-        >
-          <View style={{ width: 120, height: 120, borderRadius: 100, overflow: "hidden" }}>
-            {profileImage ? (
-              <Image
-                key={profileImage}
-                source={{ uri: profileImage }}
-                style={styles.image}
-              />
-            ) : (
-              <Image
-                source={require('../assets/images/profile.png')}
-                style={styles.image}
-              />
-            )}
+          <View style={styles.imageUploadContent}>
+            <TouchableOpacity style={styles.imageUploadBoxContent}>
+              <DocImageUpload
+
+                onImageUploaded={imageUploaded}
+                onImagePicked={imagePicked}
+                upload={false}
+                width={200}
+                height={200}
+                fileType={"images"}
+              >
+                <View style={{ width: 120, height: 120, borderRadius: 100, overflow: "hidden" }}>
+                  {profileImage ? (
+                    <Image
+                      key={profileImage}
+                      source={{ uri: profileImage }}
+                      style={styles.image}
+                    />
+                  ) : (
+                    <Image
+                      source={require('../assets/images/profile.png')}
+                      style={styles.image}
+                    />
+                  )}
+                </View>
+              </DocImageUpload>
+
+              <View style={styles.cameraIconContent}>
+                <Image
+                  source={require('../assets/icons/camera.png')}
+                  style={styles.cameraIconContent}
+                />
+              </View>
+            </TouchableOpacity>
+
+
           </View>
-        </DocImageUpload>
 
-        <View style={styles.cameraIconContent}>
-          <Image
-            source={require('../assets/icons/camera.png')}
-            style={styles. cameraIconContent}
-          />
-        </View>
-      </TouchableOpacity>
+          {errors.profileImage && <Text style={styles.error}>{errors.profileImage}</Text>}
 
-      
-    </View>
-    
-    {errors.profileImage && <Text style={styles.error}>{errors.profileImage}</Text>}
-  
 
           <RoundInput
             label="Full Name *"
@@ -551,7 +552,7 @@ const validateImageSize = async (uri: string) => {
             value={userEmail}
             onChangeText={(text) => validateEmail(text, 'userEmail')}
 
-            editable={true}
+            editable={false}
             error={errors.userEmail}
             options={[]}
           />
@@ -610,32 +611,32 @@ const validateImageSize = async (uri: string) => {
             options={[]}
           />
 
-        <View>
-      <FileUploadInput
-        label='GST Registration Form'
-        uploadText='Upload GST Form'
-        onPress={handleUploadGSTPDF}
-        pdfFile={gstPdfFile}
-        pdfFileName={gstPdfFileName}
-        errorMessage={errors.gstPdfFileName}
-        title=""
-        file={null}
-        onUpload={async () => {}}
-      />
-{errors.gstPdfFile && <Text style={styles.error}>{errors.gstPdfFile}</Text>}
-      <FileUploadInput
-        label='Pan Card *'
-        uploadText='Upload Voter Card/Pan Card'
-        onPress={handleUploadPanOrVoterPDF}
-        pdfFile={panOrVoterPdfFile}
-        pdfFileName={panOrVoterPdfFileName}
-        errorMessage={errors.panOrVoterPdfFileName}
-        title=""
-        file={null}
-        onUpload={async () => {}}
-      />
-      {errors.panOrVoterPdfFile && <Text style={styles.error}>{errors.panOrVoterPdfFile}</Text>}
-    </View>
+          <View>
+            <FileUploadInput
+              label='GST Registration Form'
+              uploadText='Upload GST Form'
+              onPress={handleUploadGSTPDF}
+              pdfFile={gstPdfFile}
+              pdfFileName={gstPdfFileName}
+              errorMessage={errors.gstPdfFileName}
+              title=""
+              file={null}
+              onUpload={async () => { }}
+            />
+            {errors.gstPdfFile && <Text style={styles.error}>{errors.gstPdfFile}</Text>}
+            <FileUploadInput
+              label='Pan Card *'
+              uploadText='Upload Voter Card/Pan Card'
+              onPress={handleUploadPanOrVoterPDF}
+              pdfFile={panOrVoterPdfFile}
+              pdfFileName={panOrVoterPdfFileName}
+              errorMessage={errors.panOrVoterPdfFileName}
+              title=""
+              file={null}
+              onUpload={async () => { }}
+            />
+            {errors.panOrVoterPdfFile && <Text style={styles.error}>{errors.panOrVoterPdfFile}</Text>}
+          </View>
           <RoundInput
             label='Address *'
             placeholder="Enter your address"
@@ -704,7 +705,7 @@ const styles = StyleSheet.create({
     bottom: 0,
     right: 8,
   },
- 
+
   image: {
     width: '100%',
     height: '100%',

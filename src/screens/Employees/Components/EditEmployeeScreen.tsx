@@ -53,12 +53,13 @@ const EditEmployeeScreen: React.FC = () => {
           throw new Error("Token or ID is missing");
         }
 
-        const response = await fetch(`http://54.152.49.191:8080/employee/getEmployeeById/${employeeId}`, {
+        const response = await fetch(`http://54.152.49.191:8080/employee/${employeeId}`, {
           method: 'GET',
           headers: {
             'Authorization': `Bearer ${token}`,
           },
         });
+console.log(response);
 
         if (!response.ok) {
           throw new Error(`HTTP error! Status: ${response.status}`);
@@ -66,6 +67,7 @@ const EditEmployeeScreen: React.FC = () => {
 
         const data = await response.json();
         setEmployee(data);
+        console.log("hj",data);
       } catch (error) {
         console.error('Error fetching employee data:', error);
         Alert.alert('Error', 'There was an error fetching the employee data.');
@@ -201,7 +203,10 @@ const EditEmployeeScreen: React.FC = () => {
           <TouchableOpacity onPress={() => downloadAndOpenFile(employee.aadharFrontDocumentUrl, 'aadharFrontDocument.pdf')}>
             <View style={styles.fileRow}>
               <Text style={styles.fileName}>Aadhar Card Front</Text>
-              <Image source={require('../../../assets/icons/pdf.png')} style={styles.icon} />
+              <Image
+                                    source={require('../../../assets/icons/invoice_download.png')}
+                                    style={styles.invoiceIocn}
+                                />
             </View>
           </TouchableOpacity>
         ) : (
@@ -213,7 +218,10 @@ const EditEmployeeScreen: React.FC = () => {
           <TouchableOpacity onPress={() => downloadAndOpenFile(employee.aadharBackDocumentUrl, 'aadharBackDocument.pdf')}>
             <View style={styles.fileRow}>
               <Text style={styles.fileName}>Aadhar Card Back</Text>
-              <Image source={require('../../../assets/icons/pdf.png')} style={styles.icon} />
+              <Image
+                                    source={require('../../../assets/icons/invoice_download.png')}
+                                    style={styles.invoiceIocn}
+                                />
             </View>
           </TouchableOpacity>
         ) : (
@@ -225,8 +233,13 @@ const EditEmployeeScreen: React.FC = () => {
           <TouchableOpacity onPress={() => downloadAndOpenFile(employee.panCardDocumentUrl, 'panCardDocument.pdf')}>
             <View style={styles.fileRow}>
               <Text style={styles.fileName}>PAN Card</Text>
-              <Image source={require('../../../assets/icons/pdf.png')} style={styles.icon} />
+              <Image
+                                    source={require('../../../assets/icons/invoice_download.png')}
+                                    style={styles.invoiceIocn}
+                                />
+                               
             </View>
+
           </TouchableOpacity>
         ) : (
           <Text>No file available</Text>
@@ -263,6 +276,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     marginBottom: 8,
+    justifyContent:"space-between"
+
   },
   fileName: {
     fontSize: 14,
@@ -280,6 +295,11 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: 'bold',
   },
+  invoiceIocn:{
+    width: 35,
+    height: 35,
+    
+},
 });
 
 export default EditEmployeeScreen;

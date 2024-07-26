@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Image, StyleSheet, Text, View } from "react-native";
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import axios from 'axios';
 import { theme } from "../../../theme";
 
 const ProfileCard: React.FC = () => {
@@ -11,16 +12,24 @@ const ProfileCard: React.FC = () => {
     useEffect(() => {
         const getUserData = async () => {
             try {
-                const value = await AsyncStorage.getItem('sarath');
-                if (value !== null) {
-                    console.log("AsyncStorage value", value);
-                    const userData = JSON.parse(value);
-                    setUserName(userData.name);
-                    setProfileImage(userData.userProfile);
-                    setUserEmail(userData.email);
+                const token = await AsyncStorage.getItem('authToken');
+                if (token) {
+                    const id = await AsyncStorage.getItem('Id'); // Assuming 'Id' is stored in AsyncStorage
+                    if (id) {
+                        const api_url = `http://54.152.49.191:8080/register/professional/${id}`;
+                        const response = await axios.get(api_url, {
+                            headers: {
+                                'Authorization': `Bearer ${token}`,
+                            },
+                        });
+                        console.log("Response Data:", response.data);
+                        setUserName(response.data.name);
+                        setProfileImage(response.data.imageS3SignedURL);
+                        setUserEmail(response.data.professionalEmail); // Assuming the API returns 'email'
+                    }
                 }
             } catch (error) {
-                console.error('Error retrieving item from AsyncStorage:', error);
+                console.error('Error fetching user data:', error);
             }
         };
 
@@ -30,12 +39,10 @@ const ProfileCard: React.FC = () => {
     return (
         <View style={styles.cardContent}>
             <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                <View>
-                    <Image
-                        source={profileImage ? { uri: profileImage } : require('../../../assets/images/profile.png')}
-                        style={styles.profileImage}
-                    />
-                </View>
+                <Image
+                    source={profileImage ? { uri: profileImage } : require('../../../assets/images/profile.png')}
+                    style={styles.profileImage}
+                />
                 <View>
                     <Text style={styles.nameText}>{userName}</Text>
                     <Text style={styles.emailText}>{userEmail}</Text>
