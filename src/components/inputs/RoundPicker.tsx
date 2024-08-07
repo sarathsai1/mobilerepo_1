@@ -20,13 +20,11 @@ const RoundPicker: React.FC<RoundPickerProps> = ({
   style,
   ...props
 }) => {
-  // A function to render Picker Items, excluding the selected one if needed
+  // A function to render Picker Items
   const renderPickerItems = () => {
-    return items
-      .filter(item => item.value !== selectedValue) // This excludes the selected item
-      .map((item, index) => (
-        <Picker.Item key={index} label={item.label} value={item.value} />
-      ));
+    return items.map((item, index) => (
+      <Picker.Item key={index} label={item.label} value={item.value} />
+    ));
   };
 
   return (
@@ -38,8 +36,8 @@ const RoundPicker: React.FC<RoundPickerProps> = ({
           onValueChange={onValueChange}
           {...props}
         >
-          {selectedValue === '' && placeholder && ( // Display placeholder if no value is selected
-            <Picker.Item label={placeholder} value="PO" />
+          {placeholder && selectedValue === '' && (
+            <Picker.Item label={placeholder} value="" />
           )}
           {renderPickerItems()}
         </Picker>
@@ -65,6 +63,7 @@ const styles = StyleSheet.create({
     borderColor: '#D0D5DD',
     backgroundColor: '#F0F1F5',
     justifyContent: 'center', // This centers the picker content
+    paddingHorizontal: 10, // Optional: Add padding for better spacing
   },
 });
 

@@ -39,7 +39,7 @@ const HomeScreen: React.FC = () => {
                     },
                 });
                 setStatusCode(response.data.statusCode);
-                setLoading(false);
+                setLoading(true);
             } catch (error) {
                 console.error('Error fetching data:', error);
                 setLoading(false);
@@ -72,7 +72,7 @@ const HomeScreen: React.FC = () => {
                     navigation.navigate('Subscription');
                     break;
                 case 207:
-                    navigation.navigate('EmplyeeDashboard');
+                    navigation.navigate('EmployeeHome');
                     break;
                 default:
                     console.warn(`Unhandled status code: ${statusCode}`);

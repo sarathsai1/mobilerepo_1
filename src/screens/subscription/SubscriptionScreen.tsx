@@ -42,6 +42,7 @@ const SubscriptionScreen: React.FC = () => {
                     },
                 });
                 setSubscriptionOptions(response.data);
+                
             } catch (err) {
                 console.error('Error fetching subscription plans:', err);
                 setError('Failed to fetch subscription plans');
@@ -73,8 +74,8 @@ const SubscriptionScreen: React.FC = () => {
 
         try {
             const token = await AsyncStorage.getItem('authToken');
-            const professionalId = await AsyncStorage.getItem('Id'); // Fetch the professional ID from storage
-
+            const professionalId = await AsyncStorage.getItem('Id');
+            // const professionalId=3
             if (!professionalId) {
                 Alert.alert('Error', 'Professional ID not found');
                 return;
@@ -103,108 +104,61 @@ const SubscriptionScreen: React.FC = () => {
         }
     };
 
-    if (loading) {
-        return <ActivityIndicator size="large" color="#0000ff" />;
-    }
+    // if (loading) {
+    //     return <ActivityIndicator size="large" color="#0000ff" />;
+    // }
 
     if (error) {
         return <View><Text>{error}</Text></View>;
     }
 
     return (
-        <>
-            {isTablet && orientation === 'horizontal' ? (
-                <BackGround safeArea={true} style={defaults.flex}>
-                    <View style={styles.container}>
-                        <View style={styles.headerContent}>
-                            <Text style={styles.title}>Subscription</Text>
-                            <Text style={styles.subtitle}>
-                                To complete the registration process, please make the payment
-                            </Text>
-                        </View>
-
-                            <View style={{ width: '48%', marginRight: 10 }}>
-                                <SubscriptionPlans options={subscriptionOptions} onSelectionChange={handleSelectionChange} />
-                            </View>
-
-                            <View style={{ width: '48%', marginLeft: 10 }}>
-                                <View style={styles.couponContent}>
-                                    <CouponCode title={''} onDiscountChange={handleDiscountChange} />
-
-                                    <View style={styles.discountLine}>
-                                        <Text style={styles.discountText}>All Your Discounts:</Text>
-                                        <Text style={[styles.discountText, styles.discountAmount]}>
-                                            {discount === 0 ? `₹${discount}` : `-₹${discount}`}
-                                        </Text>
-                                    </View>
-                                    <View style={styles.totalLine}>
-                                        <Text style={styles.totalText}>Grand total:</Text>
-                                        <Text style={styles.totalAmount}>
-                                            {planGrandTotalAmount < 0 ? `₹0` : `₹${planGrandTotalAmount}`}
-                                        </Text>
-                                    </View>
-                                </View>
-
-                                <View style={[styles.bottomOfContent, { bottom: 150 }]}>
-                                    <RoundButton
-                                        title={'Subscribe'}
-                                        onPress={handleSubscribe}
-                                        style={styles.fullWidthButton}
-                                    />
-
-                                    <Text style={styles.terms}>
-                                        You agree to the <Text style={styles.link} onPress={() => Linking.openURL('https://example.com/terms')}>Terms of Service</Text> and <Text style={styles.link} onPress={() => Linking.openURL('https://example.com/privacy')}>Privacy Policy</Text>. Subscription automatically renews unless auto-renew is turned off at least 24-hours before the end of the current period.
-                                    </Text>
-                                </View>
-                            </View>
-                      
+        <BackGround safeArea={true} style={defaults.flex}>
+            <View style={[styles.container, tabletStyle]}>
+                <View style={styles.headerContent}>
+                    <Text style={styles.title}>Subscription</Text>
+                    <Text style={styles.subtitle}>
+                        To complete the registration process, please make the payment
+                    </Text>
+                </View>
+                <ScrollView style={styles.scrollView}
+                    showsVerticalScrollIndicator={false}  // Disable vertical scroll bar
+                    showsHorizontalScrollIndicator={false}>
+                    <View style={styles.subscriptionPlansContainer}>
+                        <SubscriptionPlans options={subscriptionOptions} onSelectionChange={handleSelectionChange} />
                     </View>
-                </BackGround>
-            ) : (
-                <BackGround safeArea={true} style={defaults.flex}>
-                    <View style={[styles.container, tabletStyle]}>
-                        <View style={styles.headerContent}>
-                            <Text style={styles.title}>Subscription</Text>
-                            <Text style={styles.subtitle}>
-                                To complete the registration process, please make the payment
+                </ScrollView>
+                <View style={styles.fixedSection}>
+                    <View style={styles.couponContent}>
+                        <CouponCode title={''} onDiscountChange={handleDiscountChange} />
+                        <View style={styles.discountLine}>
+                            <Text style={styles.discountText}>All Your Discounts:</Text>
+                            <Text style={[styles.discountText, styles.discountAmount]}>
+                                {discount === 0 ? `₹${discount}` : `-₹${discount}`}
                             </Text>
                         </View>
-<ScrollView>
-                  <View style={{ width: '100%', marginRight: 10 }}>
-                                <SubscriptionPlans options={subscriptionOptions} onSelectionChange={handleSelectionChange} />
-                            </View>
-                            </ScrollView>
-                        <View style={styles.bottomOfContent}>
-                            <View style={styles.couponContent}>
-                                <CouponCode title={''} onDiscountChange={handleDiscountChange} />
-                                <View style={styles.discountLine}>
-                                    <Text style={styles.discountText}>All Your Discounts:</Text>
-                                    <Text style={[styles.discountText, styles.discountAmount]}>
-                                        {discount === 0 ? `₹${discount}` : `-₹${discount}`}
-                                    </Text>
-                                </View>
-                                <View style={styles.totalLine}>
-                                    <Text style={styles.totalText}>Grand total:</Text>
-                                    <Text style={styles.totalAmount}>
-                                        {planGrandTotalAmount < 0 ? `₹0` : `₹${planGrandTotalAmount}`}
-                                    </Text>
-                                </View>
-                            </View>
-
-                            <RoundButton
-                                title={'Subscribe'}
-                                onPress={handleSubscribe}
-                                style={styles.fullWidthButton}
-                            />
-
-                            <Text style={styles.terms}>
-                                You agree to the <Text style={styles.link} onPress={() => Linking.openURL('https://example.com/terms')}>Terms of Service</Text> and <Text style={styles.link} onPress={() => Linking.openURL('https://example.com/privacy')}>Privacy Policy</Text>. Subscription automatically renews unless auto-renew is turned off at least 24-hours before the end of the current period.
+                        <View style={styles.totalLine}>
+                            <Text style={styles.totalText}>Grand total:</Text>
+                            <Text style={styles.totalAmount}>
+                                {planGrandTotalAmount < 0 ? `₹0` : `₹${planGrandTotalAmount}`}
                             </Text>
                         </View>
                     </View>
-                </BackGround>
-            )}
-        </>
+                </View>
+
+
+                <View>
+                    <RoundButton
+                        title={'Subscribe'}
+                        onPress={handleSubscribe}
+                        style={styles.fullWidthButton}
+                    />
+                    <Text style={styles.terms}>
+                        You agree to the <Text style={styles.link} onPress={() => Linking.openURL('https://example.com/terms')}>Terms of Service</Text> and <Text style={styles.link} onPress={() => Linking.openURL('https://example.com/privacy')}>Privacy Policy</Text>. Subscription automatically renews unless auto-renew is turned off at least 24-hours before the end of the current period.
+                    </Text>
+                </View>
+            </View>
+        </BackGround>
     );
 };
 
@@ -212,42 +166,40 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
     },
-
     headerContent: {
         marginTop: 30,
         marginBottom: 10,
     },
-
     title: {
         fontSize: 35,
         color: "green",
         fontWeight: 'bold',
         marginBottom: 10,
     },
-
     subtitle: {
         fontSize: 18,
         marginBottom: 30,
         color: theme.colors.textSecondary,
     },
-
-    bottomOfContent: {
-        width: '100%',
-        paddingVertical: 10,
-        position: 'absolute',
-        bottom: 0,
-        left: 0,
-        right: 0,
-        zIndex: 1,
-        // backgroundColor: theme.colors.background,
-        // paddingHorizontal: 20,
+    scrollView: {
+        flex: 1,
     },
-
+    subscriptionPlansContainer: {
+        marginHorizontal: 3,
+        marginBottom: 15,
+    },
+    fixedSection: {
+        backgroundColor: theme.colors.primary,
+        padding: 5,
+        paddingBottom: 8,
+        borderRadius: 25,
+        
+    },
     couponContent: {
         backgroundColor: theme.colors.primary,
         borderRadius: 25,
         paddingVertical: 8,
-        marginVertical: 10,
+        marginVertical: 1,
         paddingHorizontal: 8,
     },
     discountLine: {
@@ -278,20 +230,18 @@ const styles = StyleSheet.create({
         fontSize: 16,
         fontWeight: 'bold',
     },
-
     fullWidthButton: {
         width: '100%',
         alignSelf: 'center',
+        marginTop: 9,
     },
-
     terms: {
         marginHorizontal: 20,
-        marginVertical: 5,
+        marginVertical: 8,
         fontSize: 10,
         textAlign: 'center',
         color: theme.colors.textSecondary,
     },
-
     link: {
         fontWeight: 'bold',
         color: theme.colors.text,

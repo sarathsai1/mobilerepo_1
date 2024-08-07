@@ -7,6 +7,7 @@ import StatusIndicator from "./StatusIndicator";
 import ModificationNotify from "./ModificationNotify";
 
 interface ProjectsCardsProps {
+    id:number;
     message: string;
     clientName: string;
     workNature: string;
@@ -15,11 +16,11 @@ interface ProjectsCardsProps {
     etcDate: string;
 }
 
-const ProjectsCards: React.FC<ProjectsCardsProps> = ({ message, clientName, workNature, statusMesg, startDate, etcDate }) => {
+const ProjectsCards: React.FC<ProjectsCardsProps> = ({ id,message, clientName, workNature, statusMesg, startDate, etcDate }) => {
     const navigation = useNavigation<any>();
 
     function handleView(): void {
-        navigation.navigate('Overview')
+        navigation.navigate('Overview',{ projectId: id })
     }
 
     return (

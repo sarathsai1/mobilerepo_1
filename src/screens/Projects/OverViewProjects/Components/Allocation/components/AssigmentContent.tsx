@@ -21,7 +21,7 @@ const AssigmentContent: React.FC<AssigmentContentProps> = ({ PocNames, Assistant
                 <View style={styles.assignmentList}>
                     {PocNames.map((poc, index) => (
                         <View key={index} style={styles.assignmentItem}>
-                            <Text style={styles.assignmentName}>• {poc.name}</Text>
+                            <Text style={styles.assignmentName}>- {poc.name}</Text>
                             <AllocationStatus status={poc.status} />
                         </View>
                     ))}
@@ -33,7 +33,7 @@ const AssigmentContent: React.FC<AssigmentContentProps> = ({ PocNames, Assistant
                 <View style={styles.assignmentList}>
                     {AssistantNames.map((assistant, index) => (
                         <View key={index} style={styles.assignmentItem}>
-                            <Text style={styles.assignmentName}>• {assistant.name}</Text>
+                            <Text style={styles.assignmentName}>- {assistant.name}</Text>
                             <AllocationStatus status={assistant.status} />
                         </View>
                     ))}

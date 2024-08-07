@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, Image, TouchableOpacity, StyleProp, TextStyle, ViewStyle, ImageStyle } from 'react-native';
-import { theme } from '../../../theme';
-import defaults from '../../../styles/defaults';
+import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
+import { theme } from '../../../../theme';
+import defaults from '../../../../styles/defaults';
 import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
@@ -20,15 +20,14 @@ const WelcomeBackHeader: React.FC<WelcomeBackHeaderProps> = () => {
     const getUserData = async () => {
       try {
         const token = await AsyncStorage.getItem('authToken');
-        if (token) {
-          const id = await AsyncStorage.getItem('Id'); // Assuming 'userId' is stored in AsyncStorage
+        const id = await AsyncStorage.getItem('Id');
+        if (token && id) {
           const api_url = `http://54.152.49.191:8080/register/professional/${id}`;
           const response = await axios.get(api_url, {
             headers: {
-              'Authorization': `Bearer ${token}`,
+              Authorization: `Bearer ${token}`,
             },
           });
-          console.log("Response Data:", response.data);
           setUserName(response.data.name);
           setProfileImage(response.data.imageS3SignedURL);
         }
@@ -44,22 +43,21 @@ const WelcomeBackHeader: React.FC<WelcomeBackHeaderProps> = () => {
     <View style={styles.container}>
       <View style={styles.headerTitleContent}>
         <Text style={styles.welcomeText}>Welcome back</Text>
-        <Text style={styles.userName}>{userName}</Text>
+        <Text style={styles.userName}>Employee Name</Text>
       </View>
       <View style={styles.profileContent}>
-        <View style={styles.notifyIcon}>
-          <TouchableOpacity onPress={() => { navigation.navigate("Notification") }}>
-            <Image source={require('../../../assets/icons/notification.png')} style={styles.icon} />
-          </TouchableOpacity>
-        </View>
-        <View style={styles.imageUploadContent}>
-          <TouchableOpacity style={styles.imageUploadBoxContent} onPress={() => { navigation.navigate("Profile") }}>
-            <Image
-              source={profileImage ? { uri: profileImage } : require('../../../assets/images/profile.png')}
-              style={[defaults.image, styles.profileImage]}
-            />
-          </TouchableOpacity>
-        </View>
+        <TouchableOpacity style={styles.notifyIcon} onPress={() => navigation.navigate("Notification")}>
+          <Image source={require('../../../../assets/icons/notification.png')} style={styles.icon} />
+        </TouchableOpacity>
+        <TouchableOpacity onPress={() => navigation.navigate("Profile")}>
+          {/* <Image
+            source={profileImage ? { uri: profileImage } : require('../../../../assets/images/profile.png')}
+            style={[styles.profileImage]}
+          /> */}
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.notifyIcon} onPress={() => navigation.navigate("Profile")}>
+          <Image source={require('../../../../assets/icons/setting.png')} style={styles.icon} />
+        </TouchableOpacity>
       </View>
     </View>
   );
@@ -71,8 +69,12 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     marginVertical: 25,
+    paddingHorizontal: 20,
   },
-  headerTitleContent: {},
+  headerTitleContent: {
+    flex: 1,
+    justifyContent: 'center',
+  },
   welcomeText: {
     fontSize: 14,
     color: theme.colors.textSecondary,
@@ -85,32 +87,23 @@ const styles = StyleSheet.create({
   profileContent: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between',
   },
   notifyIcon: {
     marginRight: 10,
   },
   icon: {
-    width: 30, // Set the size of your icon
-    height: 34, // Set the size of your icon
+    width: 34,
+    height: 34,
     resizeMode: 'contain',
   },
-  imageUploadContent: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-  },
-  imageUploadBoxContent: {
-    width: 70, // Reduced size
-    height: 70, // Reduced size
-    borderRadius: 35,
-    backgroundColor: 'gray',
-    position: 'relative',
-  },
   profileImage: {
-    width: 70,
-    height: 70,
-    borderRadius: 40,
+    width: 50,
+    height: 50,
+    borderRadius: 25,
+    marginRight: 10,
+    backgroundColor: 'gray',
   },
 });
 
 export default WelcomeBackHeader;
+

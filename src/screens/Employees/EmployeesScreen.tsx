@@ -13,6 +13,7 @@ import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 interface Employee {
+    id: number;
     name: string;
     phoneNumber: string;
     expertise: string;
@@ -25,11 +26,28 @@ const EmployeesScreen: React.FC = () => {
     const [professionalId, setProfessionalId] = useState<number | null>(null);
     const { isTablet, orientation } = useTabletStyle();
     const navigation = useNavigation<any>();
-
+    const [employeeIds, setEmployeeIds] = useState<number[]>([]);
+   
     const handleOpenModal = () => setModalVisible(true);
     const handleCloseModal = () => setModalVisible(false);
     const handleOpenRoleModal = () => setRoleModalVisible(true);
     const handleCloseRoleModal = () => setRoleModalVisible(false);
+
+    // useEffect(() => {
+    //     const getID = async () => {
+    //         try {
+    //             const storedId = await AsyncStorage.getItem('Id');
+    //             if (storedId !== null) {
+    //                 console.log("AsyncStorage value", storedId);
+    //                 setProfessionalId(JSON.parse(storedId));
+    //             }
+    //         } catch (error) {
+    //             console.error('Error retrieving item from AsyncStorage:', error);
+    //         }
+    //     };
+
+    //     getID();
+    // }, []);
 
     useEffect(() => {
         const getID = async () => {
@@ -46,7 +64,13 @@ const EmployeesScreen: React.FC = () => {
 
         getID();
     }, []);
-
+    // const storeEmployeeIds = async (ids: number[]) => {
+    //     try {
+    //         await AsyncStorage.setItem('employeeIds', JSON.stringify(ids));
+    //     } catch (error) {
+    //         console.error("Error storing employeeIds:", error);
+    //     }
+    // };
     useEffect(() => {
         const fetchEmployees = async () => {
             if (professionalId === null) {
@@ -62,8 +86,12 @@ const EmployeesScreen: React.FC = () => {
                         'Authorization': `Bearer ${token}`,
                     }
                 });
-                console.log("Employees fetched successfully:", response.data);
+                console.log("Employees fetched successfully:", response.data  );
                 setEmployees(response.data);
+                const ids = response.data.map((employee: { id: number }) => employee.id);
+                setEmployees(response.data);
+                setEmployeeIds(ids); // Store the IDs
+                console.log("Employees fetched idsyy:", ids);
             } catch (error) {
                 console.error("Error fetching employee data:", error);
             }
@@ -99,9 +127,18 @@ const EmployeesScreen: React.FC = () => {
                 <ScrollView showsVerticalScrollIndicator={false}>
                     <View style={isTablet && orientation === 'horizontal' ? { flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'flex-start', alignItems: 'flex-start' } : {}}>
                         {employees.map((item, index) => (
+                            // <View key={index} style={isTablet && orientation === 'horizontal' ? { width: '49%', margin: '0.5%' } : {}}>
+                            //     <EmployeesList name={item.name} phoneNumber={item.phoneNumber} expertise={item.expertise} id={0} />
+                            // </View>
                             <View key={index} style={isTablet && orientation === 'horizontal' ? { width: '49%', margin: '0.5%' } : {}}>
-                                <EmployeesList name={item.name} phoneNumber={item.phoneNumber} expertise={item.expertise} id={0} />
+                                <EmployeesList 
+                                    name={item.name} 
+                                    phoneNumber={item.phoneNumber}  
+                                    expertise={item.expertise} 
+                                    id={item.id} // Pass the ID here
+                                />
                             </View>
+
                         ))}
                     </View>
 

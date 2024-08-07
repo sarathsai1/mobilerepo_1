@@ -5,12 +5,14 @@ import defaults from '../styles/defaults';
 import { theme } from '../theme';
 import { useNavigation } from '@react-navigation/native';
 
-const ApprovalStatus: React.FC = () => {
+const ApprovalStatus: React.FC<{ route: any }> = ({ route }) => {
     const navigation = useNavigation<any>();
-    
+    //  const {id} = route.params
+    //  console.log(id);
 
     return (
         <BackGround safeArea={true} style={defaults.flex}>
+            
             <View style={styles.container}>
                 <TouchableOpacity onPress={() => navigation.navigate('')}>
                     <Image

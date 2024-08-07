@@ -68,7 +68,7 @@ const AddClientForm = ({ onSubmit }: { onSubmit: (formData: FormData) => void })
                 const gstRegex = /^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}$/;
                 setErrors(prevErrors => ({
                     ...prevErrors,
-                    clientGstNumber: gstRegex.test(value as string) ? '' : 'Invalid GST number',
+                    clientGstNumber: gstRegex.test(value as string) ? '' : 'Invalid GST number format. GST number should be in the format: 2 digits, 5 uppercase letters, 4 digits, 1 uppercase letter, 1 alphanumeric character (except 0), "Z", and 1 alphanumeric character.',
                 }));
                 break;
             default:
@@ -158,7 +158,7 @@ const AddClientForm = ({ onSubmit }: { onSubmit: (formData: FormData) => void })
 
             if (response.status === 201) {
                 const result = response.data;
-                Alert.alert('Client added successfully!', '', [{ text: 'OK', onPress: () => navigation.navigate('Clients', { id: result.id }) }]);
+                Alert.alert('Client added successfully!', '', [{ text: 'OK', onPress: () =>navigation.goBack() }]);
                 setFormData({
                     companyName: '',
                     clientName: '',

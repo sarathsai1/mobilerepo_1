@@ -2,8 +2,7 @@ import React, { useState, useEffect } from "react";
 import { SafeAreaView, StyleSheet, TextInput, Text, View, TouchableOpacity, Image, DeviceEventEmitter } from 'react-native';
 import { useNavigation } from "@react-navigation/native";
 import OtpTextInput from 'react-native-otp-textinput';
-
-
+import auth from '@react-native-firebase/auth';
 import RoundInput from '../../components/inputs/RoundInput';
 import RoundButton from '../../components/buttons/RoundButton';
 import SocialMediaButton from '../../components/buttons/SocialMediaButton';
@@ -21,19 +20,47 @@ const OtpVerification: React.FC<{ route: any }> = ({ route }) => {
     const { confirmationResult } = useAuth();
     const { isTablet, orientation, tabletStyle } = useTabletStyle();
 
+    // const handleVerify = async () => {
+    //     if (confirmationResult) {
+    //         // Use confirmationResult to verify OTP
+    //         try {
+    //             const userCredential: any = await confirmationResult.confirm(otpValue);
+    //             console.log('user', userCredential);
+    // //             const idToken = userCredential.user.getIdToken();
+    // //             console.log('ID Token:', idToken);
+    // //             const phoneCredential = auth.PhoneAuthProvider.credential(idToken);
+    // //   console.log('phoneCredential', phoneCredential);
+    // //             console.log('ID Token:', idToken);
+    //             // console.log('Access Token:', accessToken);
+          
+    //             const firebaseUser = await auth().signInWithCredential(phoneCredential);
+    //             const token = await firebaseUser.user.getIdToken()
+    //             console.log('idatoken', token);
+    //             navigation.navigate('Registration');
+    //         } catch (error) {
+    //             console.error('Error during phone number verification', error);
+    //         }
+    //     }
+    // };
+
+
+
     const handleVerify = async () => {
         if (confirmationResult) {
-            // Use confirmationResult to verify OTP
             try {
                 const userCredential: any = await confirmationResult.confirm(otpValue);
-                console.log('user', userCredential.user);
+                console.log('user', userCredential);
+                const firebaseUser = userCredential.user;
+                const token = await firebaseUser.getIdToken();
+                console.log('ID Token:', token);
+                // Use the ID token as needed for authentication in your backend
                 navigation.navigate('Registration');
             } catch (error) {
                 console.error('Error during phone number verification', error);
             }
         }
     };
-
+    
     return (
         <BackGround safeArea={true} style={defaults.flex}>
             <View style={[styles.container, tabletStyle, isTablet && orientation === 'vertical' ? { width: '70%', height: 'auto', alignSelf: 'center' } : {}]}>

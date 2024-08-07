@@ -429,13 +429,13 @@ const RegistrationScreen: React.FC = () => {
     }
     setPhoneNumber(String(text));
   };
-  const gstNumberRegex = /^[A-Za-z0-9]+$/; // Adjust this regex based on the actual format of GST numbers
+  const gstNumberRegex =  /^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}$/; // Adjust this regex based on the actual format of GST numbers
   const panNumberRegex = /^[A-Z]{5}[0-9]{4}[A-Z]{1}$/; // Example regex for PAN number format
   const validateGSTNumber = (text: string) => {
     if (!text) {
       setErrors((prev) => ({ ...prev, gstNumber: 'GST Number is required' }));
     } else if (!gstNumberRegex.test(text)) {
-      setErrors((prev) => ({ ...prev, gstNumber: 'GST Number should only contain alphanumeric characters' }));
+      setErrors((prev) => ({ ...prev, gstNumber: 'Invalid GST number format. GST number should be in the format: 2 digits, 5 uppercase letters, 4 digits, 1 uppercase letter, 1 alphanumeric character (except 0), "Z", and 1 alphanumeric character.' }));
     } else {
       setErrors((prev) => ({ ...prev, gstNumber: '' }));
     }
@@ -717,7 +717,7 @@ const styles = StyleSheet.create({
   registrationContent: {
     width: '100%',
     paddingVertical: 30,
-    backgroundColor: theme.colors.background
+    // backgroundColor: theme.colors.background
   },
 
   fullWidthButton: {

@@ -9,4 +9,5 @@ export type RootStackParamList = {
     Clients: undefined;
     ClientsDues: undefined;
     Settings: undefined;
+    EmployeeHome: undefined;
 };

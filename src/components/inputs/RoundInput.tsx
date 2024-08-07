@@ -68,6 +68,8 @@ const styles = StyleSheet.create({
         color: 'black',
     },
     label: {
+        
+        marginLeft: 10,
         marginBottom: 5,
         color: theme.colors.text, // Use theme color for label text
     },

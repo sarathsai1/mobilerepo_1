@@ -8,6 +8,9 @@ type SubscriptionPlansType = {
   subscriptionDuration: number;
   subscriptionPlanAmount: number;
   description: string[];
+  numberOfEmployees:number;
+  numberOfProjects:number;
+  numberOfClients:number;
 };
 
 type SubscriptionPlansProps = {
@@ -39,7 +42,10 @@ const SubscriptionPlans: React.FC<SubscriptionPlansProps> = ({ options, onSelect
             <Text style={[styles.priceText, { marginBottom: 10 }]}>
               ₹{option.subscriptionPlanAmount} / mo (₹{option.subscriptionDuration} / year)
             </Text>
-            <Text style={[styles.priceText, { fontWeight: '600' }]}>{option.description}</Text>
+            <Text style={[styles.priceText, { fontWeight: '400' }]}>{option.description}</Text>
+            <Text style={[styles.priceText, { fontWeight: '400' }]}> Number Of Employees:{option.numberOfEmployees}</Text>
+            <Text style={[styles.priceText, { fontWeight: '400' }]}> Number Of Projects:{option.numberOfProjects}</Text>
+            <Text style={[styles.priceText, { fontWeight: '400' }]}> Number Of Clients:{option.numberOfClients}</Text>
           </View>
           <View style={styles.radioButton}>
             <View

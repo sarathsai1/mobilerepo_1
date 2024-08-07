@@ -27,6 +27,7 @@ import DailyRemindersScreen from '../screens/DailyReminder/DailyRemindersScreen'
 import MyaccountScreen from '../screens/MyaccountScreen';
 import EditEmployeeScreen from '../screens/Employees/Components/EditEmployeeScreen';
 import SplashScreen from '../screens/Settings/SplashScreen/SplashScreen'; // Import SplashScreen if it's in a separate file
+import EmployeeScreen from '../screens/home/EmployeeScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -80,6 +81,7 @@ const AppNavigator: React.FC = () => {
                         component={OtpVerification}
                         options={({ navigation }) => getScreenOptions('', navigation)}
                     />
+                    
                     <Stack.Screen
                         name="Registration"
                         component={RegistrationScreen}
@@ -168,6 +170,7 @@ const AppNavigator: React.FC = () => {
                         component={EditEmployeeScreen}
                         options={({ navigation }) => getScreenOptions('EditEmployee', navigation)}
                     />
+                     <Stack.Screen name="EmployeeHome" component={EmployeeScreen} options={{ headerShown: false }} />
                 </>
             )}
         </Stack.Navigator>

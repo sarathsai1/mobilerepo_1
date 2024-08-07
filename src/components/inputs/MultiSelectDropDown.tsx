@@ -2,16 +2,24 @@ import React, { useState } from "react";
 import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import RoundPicker from "./RoundPicker";
 
+type Option = {
+    label: string; // Display name
+    value: string; // ID
+};
+
 type MultiSelectDropDownProps = {
-    data: string[];
-    label: string;
+    data: Option[]; // Array of options with label and value
+    label: string; // Placeholder label for the picker
     selectedItems: string[];
-    onSelectionChange: (selectedItems: string[]) => void;
+    onSelectionChange: (selectedItems: string[]) => void; // Callback to update selected items
+    placeholder?: string;
+    // items: { label: string; value: number }[];
+    // onSelect: (selectedItems: number[]) => void;
 };
 
 type TagProps = {
-    item: string;
-    onRemove: (item: string) => void;
+    item: string; // Selected item label
+    onRemove: (item: string) => void; // Callback to remove item
 };
 
 const Tag: React.FC<TagProps> = ({ item, onRemove }) => {
@@ -28,12 +36,28 @@ const Tag: React.FC<TagProps> = ({ item, onRemove }) => {
     );
 };
 
+const MultiSelectDropDown: React.FC<MultiSelectDropDownProps> = ({
+    data = [], // Default to an empty array
+    label,
+    selectedItems = [], // Default to an empty array
+    onSelectionChange,
+    placeholder,
+}) => {
+    const [selectedValue, setSelectedValue] = useState<string>('');
 
+    // Ensure data is an array
+    if (!Array.isArray(data)) {
+        console.error('Data prop should be an array');
+        return null;
+    }
 
-const MultiSelectDropDown: React.FC<MultiSelectDropDownProps> = ({ data, label }) => {
-    const [selectedItems, setSelectedItems] = useState<string[]>([]);
-    const [selectedValue, setSelectedValue] = useState<string | number>('');
+    // Create a map from IDs to names for quick lookup
+    const idToNameMap = data.reduce((acc, option) => {
+        acc[option.value] = option.label;
+        return acc;
+    }, {} as Record<string, string>);
 
+    // Handle the change of selected value from the picker
     const handleValueChange = (itemValue: string | number) => {
         if (itemValue !== '') {
             handleSelectItem(itemValue.toString());
@@ -41,33 +65,44 @@ const MultiSelectDropDown: React.FC<MultiSelectDropDownProps> = ({ data, label }
         }
     };
 
-    const handleSelectItem = (item: string) => {
-        if (!selectedItems.includes(item)) {
-            setSelectedItems([...selectedItems, item]);
+    // Add selected item if it's not already included
+    const handleSelectItem = (itemValue: string) => {
+        if (!selectedItems.includes(itemValue)) {
+            const updatedSelectedItems = [...selectedItems, itemValue];
+            onSelectionChange(updatedSelectedItems);
         }
     };
 
+    // Remove the selected item
+    const removeTag = (itemValue: string) => {
+        const updatedSelectedItems = selectedItems.filter((selectedItem) => selectedItem !== itemValue);
+        onSelectionChange(updatedSelectedItems);
+    };
 
-    const removeTag = (item: string) => {
-        setSelectedItems(selectedItems.filter((selectedItem) => selectedItem !== item));
+    // Filter out selected items from the dropdown data
+    const filteredData = data.filter(item => !selectedItems.includes(item.value));
+
+    // Get the label for a given ID
+    const getLabelForValue = (value: string) => {
+        return idToNameMap[value] || '';
     };
 
     return (
         <View style={styles.container}>
             <RoundPicker
                 selectedValue={selectedValue}
-                items={data.map((item) => ({ label: item, value: item }))}
-                placeholder={label} // Your placeholder text
+                items={filteredData} // Use filtered data here
+                placeholder={placeholder} // Your placeholder text
                 onValueChange={handleValueChange}
             />
-            <View style={styles.slectedTagsConetnt}>
-                {selectedItems.map((item) => (
-                    <Tag key={item} item={item} onRemove={removeTag} />
+            <View style={styles.selectedTagsContent}>
+                {selectedItems.map((itemValue) => (
+                    <Tag key={itemValue} item={getLabelForValue(itemValue)} onRemove={removeTag} />
                 ))}
             </View>
         </View>
-    )
-}
+    );
+};
 
 const styles = StyleSheet.create({
     container: {
@@ -85,7 +120,7 @@ const styles = StyleSheet.create({
         shadowRadius: 4,
         elevation: 1,
     },
-    slectedTagsConetnt: {
+    selectedTagsContent: {
         padding: 15,
         flexDirection: 'row',
         flexWrap: 'wrap',
@@ -107,6 +142,6 @@ const styles = StyleSheet.create({
         height: 20,
         marginLeft: 5,
     },
-})
+});
 
 export default MultiSelectDropDown;

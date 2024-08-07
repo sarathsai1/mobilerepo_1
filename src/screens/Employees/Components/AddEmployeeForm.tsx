@@ -238,12 +238,11 @@ const AddEmployeeForm = ({ onSubmit }: { onSubmit: () => void }) => {
                     result = await response.json();
                 }
                 console.log('Add Employee successful:', result);
-                await AsyncStorage.setItem('employeeId', JSON.stringify(result.id));
-                console.log('Stored employeeId:', result.id);
+                
                 Alert.alert('Success', 'Add Employee successful', [
                     {
                         text: 'OK',
-                        onPress: () => navigation.navigate('Employees')
+                        onPress: () =>navigation.goBack()
                     }
                 ]);
             } else {
@@ -258,7 +257,7 @@ const AddEmployeeForm = ({ onSubmit }: { onSubmit: () => void }) => {
 
     return (
         <View style={styles.formContainer}>
-            <ScrollView showsVerticalScrollIndicator={true} style={{ width: '100%', height: 400 }}>
+            <ScrollView showsVerticalScrollIndicator={false} style={{ width: '100%', height: 400 }}>
                 <RoundInput
                     placeholder="Employee Name"
                     value={employeeName}
